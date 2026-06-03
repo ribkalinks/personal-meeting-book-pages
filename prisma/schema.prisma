@@ -1,0 +1,63 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. Model untuk Data Pengguna (User)
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  bookings      Booking[] // Relasi ke halaman booking yang dibuat user
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// 2. Model untuk Integrasi Akun Eksternal (OAuth Google)
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+// 3. Model untuk Sesi Login User
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// 4. Model untuk Halaman Jadwal Pertemuan / Booking
+model Booking {
+  id          String   @id @default(cuid())
+  title       String   // Judul meeting
+  description String?  // Deskripsi opsional
+  startTime   DateTime // Jam mulai
+  endTime     DateTime // Jam selesai
+  userId      String   // Kreator meeting
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
