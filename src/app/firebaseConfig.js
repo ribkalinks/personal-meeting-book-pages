@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// Konfigurasi Firebase sesuai dengan yang ada di screenshot-mu
+
 const firebaseConfig = {
   apiKey: "AIzaSyB3IQkaqe3FM1YFzP3ww8sjOJg6YrO0tDQ",
   authDomain: "personal-meeting-booking-page.firebaseapp.com",
@@ -15,5 +15,5 @@ const firebaseConfig = {
 // Inisialisasi Firebase
 const app = initializeApp(firebaseConfig);
 
-// Inisialisasi Firestore dan export agar bisa dipakai di komponen lain
+
 export const db = getFirestore(app);
