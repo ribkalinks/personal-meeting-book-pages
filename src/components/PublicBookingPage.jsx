@@ -10,7 +10,7 @@ function PublicBookingPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  // ✅ Biarkan default-nya null atau hari ini, tapi kita pastikan fungsi perubahannya aman
+  // Biarkan default-nya null atau hari ini, pastikan fungsi perubahannya aman
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(''); 
   
@@ -20,7 +20,7 @@ function PublicBookingPage() {
   // Available time slots
   const availableTimes = ['09:00', '11:00', '14:00', '16:00'];
 
-  // ✅ Fungsi pengubah tanggal yang aman agar sorotan biru lancar berpindah saat diklik
+  // Fungsi pengubah tanggal yang aman agar sorotan biru lancar berpindah saat diklik
   const handleDateChange = (date) => {
     if (date) {
       setSelectedDate(date);
@@ -43,7 +43,7 @@ function PublicBookingPage() {
     setIsSubmitting(true);
 
     try {
-      // ✅ Memastikan konversi format tanggalnya valid dan aman
+      // Memastikan konversi format tanggalnya valid dan aman
       const formattedDate = format(selectedDate, 'yyyy-MM-dd');
 
       const response = await fetch('/api/bookings', {
@@ -134,7 +134,7 @@ function PublicBookingPage() {
           {/* Left Column: Inline Calendar */}
           <div className="calendar-box">
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Select Date:</label>
-            {/* ✅ Menggunakan fungsi pengubah handleDateChange yang sudah divalidasi */}
+            {/* Menggunakan fungsi pengubah handleDateChange yang sudah divalidasi */}
             <DatePicker 
               selected={selectedDate} 
               onChange={handleDateChange} 
