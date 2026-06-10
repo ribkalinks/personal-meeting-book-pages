@@ -10,6 +10,7 @@ function PublicBookingPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  // ✅ Biarkan default-nya null atau hari ini, tapi kita pastikan fungsi perubahannya aman
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(''); 
   
@@ -19,9 +20,21 @@ function PublicBookingPage() {
   // Available time slots
   const availableTimes = ['09:00', '11:00', '14:00', '16:00'];
 
+  // ✅ Fungsi pengubah tanggal yang aman agar sorotan biru lancar berpindah saat diklik
+  const handleDateChange = (date) => {
+    if (date) {
+      setSelectedDate(date);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!selectedDate) {
+      alert("Please select a meeting date first!");
+      return;
+    }
+
     if (!selectedTime) {
       alert("Please select a meeting time first!");
       return;
@@ -30,9 +43,9 @@ function PublicBookingPage() {
     setIsSubmitting(true);
 
     try {
+      // ✅ Memastikan konversi format tanggalnya valid dan aman
       const formattedDate = format(selectedDate, 'yyyy-MM-dd');
 
-      // DI SINI PERUBAHANNYA: Mengirim data tamu lewat API Route Poin 6 kemarin
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: {
@@ -70,7 +83,7 @@ function PublicBookingPage() {
         <p>Thank you, <strong>{name}</strong>. Your meeting request has been recorded.</p>
         <p>Please wait for further confirmation from us via WhatsApp or Email.</p>
         <button 
-          onClick={() => { setIsSuccess(false); setSelectedTime(''); setName(''); setEmail(''); setPhone(''); }} 
+          onClick={() => { setIsSuccess(false); setSelectedTime(''); setName(''); setEmail(''); setPhone(''); setSelectedDate(new Date()); }} 
           style={{ marginTop: '20px', padding: '10px 20px', cursor: 'pointer' }}
         >
           Book Another Meeting
@@ -121,9 +134,10 @@ function PublicBookingPage() {
           {/* Left Column: Inline Calendar */}
           <div className="calendar-box">
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Select Date:</label>
+            {/* ✅ Menggunakan fungsi pengubah handleDateChange yang sudah divalidasi */}
             <DatePicker 
               selected={selectedDate} 
-              onChange={(date) => setSelectedDate(date)} 
+              onChange={handleDateChange} 
               minDate={new Date()} 
               inline 
             />
