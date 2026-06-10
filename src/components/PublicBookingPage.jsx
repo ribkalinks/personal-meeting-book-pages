@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -10,12 +10,18 @@ function PublicBookingPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  // Biarkan default-nya null atau hari ini, pastikan fungsi perubahannya aman
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  
+  // 1. Set default awal ke null dulu biar aman dari SSR server Next.js
+  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(''); 
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // 2. Paksa ambil tanggal hari ini pas halaman udah ngetok pintu browser user (Client-Side)
+  useEffect(() => {
+    setSelectedDate(new Date());
+  }, []);
 
   // Available time slots
   const availableTimes = ['09:00', '11:00', '14:00', '16:00'];
@@ -43,7 +49,6 @@ function PublicBookingPage() {
     setIsSubmitting(true);
 
     try {
-      // Memastikan konversi format tanggalnya valid dan aman
       const formattedDate = format(selectedDate, 'yyyy-MM-dd');
 
       const response = await fetch('/api/bookings', {
@@ -99,7 +104,6 @@ function PublicBookingPage() {
       
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         
-        {/* Guest Information Input Fields */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Full Name:</label>
@@ -128,22 +132,21 @@ function PublicBookingPage() {
 
         <hr style={{ border: '0', borderTop: '1px solid #eee', margin: '10px 0' }} />
 
-        {/* Calendar & Time Grid Section */}
         <div className="booking-container">
           
-          {/* Left Column: Inline Calendar */}
           <div className="calendar-box">
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Select Date:</label>
-            {/* Menggunakan fungsi pengubah handleDateChange yang sudah divalidasi */}
-            <DatePicker 
-              selected={selectedDate} 
-              onChange={handleDateChange} 
-              minDate={new Date()} 
-              inline 
-            />
+            {/* Hanya render DatePicker kalau selectedDate udah dapet value di client side */}
+            {selectedDate && (
+              <DatePicker 
+                selected={selectedDate} 
+                onChange={handleDateChange} 
+                minDate={new Date()} 
+                inline 
+              />
+            )}
           </div>
 
-          {/* Right Column: Time Slots Grid */}
           <div className="time-grid-box">
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Select Time (WITA):</label>
             <div className="time-grid">
