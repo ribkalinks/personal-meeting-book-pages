@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { sendWhatsAppNotification } from '@/lib/notifications';
 import { convertToUTC } from '../../../utils/dateHelper';
 import { NextResponse } from 'next/server';
 import { db } from '@/app/firebaseConfig';
@@ -72,6 +73,13 @@ export async function POST(request: Request) {
       status: 'pending',
       createdAt: serverTimestamp()
     });
+
+    // perintah untuk mengirim WA setelah data masuk ke database
+    await sendWhatsAppNotification(
+      "6282336566741",
+      `Halo Admin, ada booking baru!\nNama: ${customerName}\nTanggal: ${bookingDate}\nJam: ${bookingTime}\nID: ${docRef.id}`
+    );
+    // ----------------------------
 
     return NextResponse.json({ 
       success: true, 
