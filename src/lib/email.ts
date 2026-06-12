@@ -5,8 +5,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendEmailNotification(to: string, subject: string, htmlContent: string) {
   try {
     const data = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: to, // harus pakai variabel 'to' agar terkirim ke customer yang booking
+      // isi alamat domain asli
+      from: 'hello@ribka.dev', 
+      to: to,
       subject: subject,
       html: htmlContent,
     });
