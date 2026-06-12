@@ -15,9 +15,14 @@ import {
   deleteDoc 
 } from 'firebase/firestore';
 
-// ==========================================
-// 1. GET: Mengambil semua data untuk Admin
-// ==========================================
+const formatPhoneNumber = (phone: string) => {
+  let formatted = phone.replace(/\D/g, '');
+  if (formatted.startsWith('0')) {
+    formatted = '62' + formatted.substring(1);
+  }
+  return formatted;
+};
+
 export async function GET() {
   try {
     const q = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
@@ -45,9 +50,6 @@ export async function GET() {
   }
 }
 
-// ==========================================
-// 2. POST: Menerima data dari Form Tamu
-// ==========================================
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -74,16 +76,20 @@ export async function POST(request: Request) {
       createdAt: serverTimestamp()
     });
 
-    // perintah untuk mengirim WA setelah data masuk ke database
     await sendWhatsAppNotification(
       "6282336566741",
       `Halo Admin, ada booking baru!\nNama: ${customerName}\nTanggal: ${bookingDate}\nJam: ${bookingTime}\nID: ${docRef.id}`
     );
-    // ----------------------------
+
+    const formattedCustomerPhone = formatPhoneNumber(customerPhone);
+    await sendWhatsAppNotification(
+      formattedCustomerPhone,
+      `Halo ${customerName}, terima kasih sudah booking. Permintaan kamu untuk tanggal ${bookingDate} jam ${bookingTime} sedang kami proses ya!`
+    );
 
     return NextResponse.json({ 
       success: true, 
-      message: "Booking successfully created through API!", 
+      message: "Booking successfully created and notifications sent!", 
       bookingId: docRef.id 
     }, { status: 201 });
 
@@ -93,9 +99,6 @@ export async function POST(request: Request) {
   }
 }
 
-// ==========================================
-// 3. PUT: Memperbarui Status Booking / Approve (Admin)
-// ==========================================
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
@@ -125,9 +128,6 @@ export async function PUT(request: Request) {
   }
 }
 
-// ==========================================
-// 4. DELETE: Menghapus / Cancel Booking (Admin)
-// ==========================================
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
