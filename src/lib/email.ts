@@ -6,7 +6,7 @@ export async function sendEmailNotification(to: string, subject: string, htmlCon
   try {
     const data = await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: to,
+      to: to, // harus pakai variabel 'to' agar terkirim ke customer yang booking
       subject: subject,
       html: htmlContent,
     });
