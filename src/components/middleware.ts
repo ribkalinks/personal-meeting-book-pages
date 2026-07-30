@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// 💡 UBAH KE 'false' JIKA HALAMAN /LOGIN SUDAH SIAP DAN KAMU MAU MENGAKTIFKAN PROTEKSI PENUH
+// 💡 UBAH KE 'false' JIKA HALAMAN /LOGIN SUDAH SIAP DAN MAU MENGAKTIFKAN PROTEKSI PENUH
 const IS_TESTING_MODE = true;
 
 export function middleware(request: NextRequest) {
